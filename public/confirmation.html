@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paiement confirmé</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px;
+        }
+        .container {
+            background: white;
+            border-radius: 28px;
+            padding: 50px 40px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+        .icon {
+            font-size: 72px;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 28px;
+            color: #0a1a3a;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #4a5a7a;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: #1a4c8c;
+            color: white;
+            padding: 14px 40px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 24px;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background: #0f3a6e;
+            transform: translateY(-2px);
+        }
+        .footer {
+            margin-top: 28px;
+            font-size: 13px;
+            color: #9aa3b5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">✅</div>
+        <h1>Paiement confirmé !</h1>
+        <p>Votre paiement a bien été enregistré.</p>
+        <p style="margin-top: 10px; font-size: 14px; color: #6a7a9a;">
+            Vous recevrez un email de confirmation sous 24h.
+        </p>
+        <a href="/" class="btn">💳 Nouveau paiement</a>
+        <div class="footer">Paiement sécurisé – Tous droits réservés</div>
+    </div>
+</body>
+</html>

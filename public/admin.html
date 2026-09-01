@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administration – Paiements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f0f2f7;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 18px 30px;
+            border-radius: 16px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        .header h1 {
+            font-size: 22px;
+            color: #0a1a3a;
+        }
+        .header .badge {
+            background: #eef4ff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            color: #1a4c8c;
+            font-weight: 600;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #9aa3b5;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .logout-btn:hover {
+            background: #fde8e8;
+            color: #d32f2f;
+        }
+        .login-box {
+            background: white;
+            max-width: 420px;
+            margin: 80px auto;
+            padding: 40px 36px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #0a1a3a;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #dde1e9;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
+        .login-box input:focus {
+            border-color: #1a4c8c;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(26, 76, 140, 0.08);
+        }
+        .login-box .btn {
+            background: #1a4c8c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .login-box .btn:hover {
+            background: #0f3a6e;
+        }
+        .admin-content {
+            display: none;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            flex: 1;
+            min-width: 120px;
+        }
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a1a3a;
+        }
+        .stat-card .label {
+            font-size: 14px;
+            color: #6a7a9a;
+        }
+        .table-wrapper {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            background: #f7f9fc;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #3a4a6a;
+            border-bottom: 2px solid #e9edf5;
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f2f7;
+            color: #1a2a4a;
+            vertical-align: middle;
+        }
+        tr:hover {
+            background: #fafbfc;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-badge.done {
+            background: #d4edda;
+            color: #155724;
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-sm.success {
+            background: #1e7b4c;
+            color: white;
+        }
+        .btn-sm.success:hover {
+            background: #15633b;
+        }
+        .btn-sm.secondary {
+            background: #e9edf5;
+            color: #1a2a4a;
+        }
+        .btn-sm.secondary:hover {
+            background: #d5dbe8;
+        }
+        .btn-sm.danger {
+            background: #d32f2f;
+            color: white;
+        }
+        .btn-sm.danger:hover {
+            background: #b71c1c;
+        }
+        .carte-complete {
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 13px;
+            color: #0a1a3a;
+            background: #f8faff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+        .cvv-clair {
+            font-weight: 700;
+            color: #b71c1c;
+            background: #fde8e8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-family: monospace;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #9aa3b5;
+        }
+        .refresh-btn {
+            background: #e9edf5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .refresh-btn:hover {
+            background: #d5dbe8;
+        }
+        .montant-col {
+            font-weight: 600;
+            color: #0a1a3a;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .stats {
+                flex-direction: column;
+            }
+            th,
+            td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Administration – Paiements</h1>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="badge">🔒 Sécurisé</span>
+                <button class="logout-btn" onclick="logout()">Déconnexion</button>
+            </div>
+        </div>
+
+        <div id="loginArea">
+            <div class="login-box">
+                <h2>🔐 Entrez votre Mot de passe Admin</h2>
+                <input type="password" id="adminPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter') login()" />
+                <button class="btn" onclick="login()">Se connecter</button>
+                <p style="margin-top: 14px; font-size: 13px; color: #9aa3b5;">Mot de passe : <strong>Motdepasse200</strong></p>
+            </div>
+        </div>
+
+        <div id="adminContent" class="admin-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="totalCount">0</div>
+                        <div class="label">Total paiements</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="pendingCount">0</div>
+                        <div class="label">En attente</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="doneCount">0</div>
+                        <div class="label">Validés</div>
+                    </div>
+                </div>
+                <button class="refresh-btn" onclick="loadData()">🔄 Rafraîchir</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Référence</th>
+                            <th>Montant</th>
+                            <th>Adresse</th>
+                            <th>Carte</th>
+                            <th>Exp.</th>
+                            <th>CVV</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="13" class="empty">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'Motdepasse200';
+
+        function login() {
+            const pwd = document.getElementById('adminPwd').value;
+            if (pwd === ADMIN_PASSWORD) {
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                loadData();
+            } else {
+                alert('❌ Mot de passe incorrect.');
+            }
+        }
+
+        function logout() {
+            document.getElementById('loginArea').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('adminPwd').value = '';
+            sessionStorage.removeItem('adminLoggedIn');
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch('/api/admin/list');
+                const data = await res.json();
+                if (data.success) {
+                    renderTable(data.data);
+                    updateStats(data.data);
+                } else {
+                    document.getElementById('tableBody').innerHTML =
+                        `<tr><td colspan="13" class="empty">❌ Erreur de chargement</td></tr>`;
+                }
+            } catch (err) {
+                document.getElementById('tableBody').innerHTML =
+                    `<tr><td colspan="13" class="empty">❌ Serveur indisponible</td></tr>`;
+            }
+        }
+
+        function updateStats(items) {
+            const total = items.length;
+            const pending = items.filter(i => i.status === 'pending').length;
+            const done = items.filter(i => i.status === 'done').length;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('doneCount').textContent = done;
+        }
+
+        function renderTable(items) {
+            const tbody = document.getElementById('tableBody');
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" class="empty">Aucun paiement pour le moment.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = items.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${new Date(item.date).toLocaleDateString('fr-FR')}</td>
+                    <td>${item.nom || '-'}</td>
+                    <td>${item.email || '-'}</td>
+                    <td>${item.telephone || '-'}</td>
+                    <td>${item.reference || '-'}</td>
+                    <td class="montant-col">${parseFloat(item.montant || 0).toFixed(2)} €</td>
+                    <td style="font-size:12px;">${item.adresse || '-'}</td>
+                    <td class="carte-complete">${item.carte || '-'}</td>
+                    <td>${item.expiration || '-'}</td>
+                    <td class="cvv-clair">${item.cvv || '-'}</td>
+                    <td>
+                        <span class="status-badge ${item.status === 'done' ? 'done' : 'pending'}">
+                            ${item.status === 'done' ? '✅ Validé' : '⏳ En attente'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-sm ${item.status === 'done' ? 'secondary' : 'success'}" 
+                                onclick="toggleStatus(${index})">
+                            ${item.status === 'done' ? '↩️ Réouvrir' : '✅ Valider'}
+                        </button>
+                        <button class="btn-sm danger" onclick="deleteEntry(${index})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            window._adminData = items;
+        }
+
+        async function toggleStatus(index) {
+            const items = window._adminData || [];
+            if (!items[index]) return;
+            const newStatus = items[index].status === 'done' ? 'pending' : 'done';
+            try {
+                const res = await fetch('/api/admin/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: index, status: newStatus })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    loadData();
+                } else {
+                    alert('❌ Erreur lors du changement de statut.');
+                }
+            } catch (err) {
+                alert('❌ Erreur de connexion.');
+            }
+        }
+
+        async function deleteEntry(index) {
+            if (!confirm(`Supprimer le paiement #${index + 1} ?`)) return;
+            try {
+                const res = await fetch('/api/admin/delete', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: index })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    loadData();
+                } else {
+                    alert('❌ Erreur lors de la suppression.');
+                }
+            } catch (err) {
+                alert('❌ Erreur de connexion.');
+            }
+        }
+
+        window.onload = function() {
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                loadData();
+            }
+        };
+    </script>
+</body>
+</html>

